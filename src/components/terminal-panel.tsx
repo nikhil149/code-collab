@@ -115,7 +115,7 @@ const TerminalPanel: FC<TerminalPanelProps> = ({ code }) => {
   };
 
   return (
-    <div className="h-56 shrink-0 border-t bg-card">
+    <div className="h-40 shrink-0 border-t bg-card">
       <div className="flex h-10 items-center justify-between border-b px-4">
         <div className="flex items-center gap-2">
           <Terminal className="h-5 w-5" />
