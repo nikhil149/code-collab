@@ -10,13 +10,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import CloneRepoModal from "./clone-repo-modal";
 import ShareSessionModal from "./share-session-modal";
+import { type FileNode } from "./file-explorer";
 
 interface AppHeaderProps {
   language: string;
   onLanguageChange: (language: string) => void;
+  onCloneSuccess: (fileTree: FileNode[]) => void;
 }
 
-const AppHeader: FC<AppHeaderProps> = ({ language, onLanguageChange }) => {
+const AppHeader: FC<AppHeaderProps> = ({ language, onLanguageChange, onCloneSuccess }) => {
   const languages: Record<string, string> = {
     javascript: "JavaScript (Node.js)",
     python: "Python (CPython 3.11)",
@@ -49,7 +51,7 @@ const AppHeader: FC<AppHeaderProps> = ({ language, onLanguageChange }) => {
         </DropdownMenu>
       </div>
       <div className="flex items-center gap-3">
-        <CloneRepoModal>
+        <CloneRepoModal onCloneSuccess={onCloneSuccess}>
             <Button variant="outline">
                 <GitBranch className="mr-2 h-4 w-4" />
                 Clone

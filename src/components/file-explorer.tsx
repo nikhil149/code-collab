@@ -5,40 +5,27 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collap
 import { cn } from '@/lib/utils';
 import { ScrollArea } from './ui/scroll-area';
 
+export interface FileNode {
+  name: string;
+  path: string;
+  type: 'file' | 'folder';
+  children?: FileNode[];
+}
+
 interface FileExplorerProps {
   activeFile: string;
   onFileSelect: (path: string) => void;
+  fileTree: FileNode[];
 }
 
-const fileTree = [
-  {
-    name: 'src',
-    type: 'folder',
-    path: '/src',
-    children: [
-      { name: 'components', type: 'folder', path: '/src/components', children: [
-        { name: 'button.js', type: 'file', path: '/src/components/button.js' },
-        { name: 'modal.js', type: 'file', path: '/src/components/modal.js' },
-      ]},
-      { name: 'main.js', type: 'file', path: '/src/main.js' },
-      { name: 'api.js', type: 'file', path: '/src/api.js' },
-    ],
-  },
-    { name: 'public', type: 'folder', path: '/public', children: [
-        { name: 'index.html', type: 'file', path: '/public/index.html' },
-    ]},
-  { name: 'package.json', type: 'file', path: '/package.json' },
-  { name: 'README.md', type: 'file', path: '/README.md' },
-];
+const FileExplorer: FC<FileExplorerProps> = ({ activeFile, onFileSelect, fileTree }) => {
 
-const FileExplorer: FC<FileExplorerProps> = ({ activeFile, onFileSelect }) => {
-
-  const renderTree = (nodes: any[], level = 0) => {
+  const renderTree = (nodes: FileNode[], level = 0) => {
     return nodes.map(node => {
       const isActive = activeFile === node.path;
       if (node.type === 'folder') {
         return (
-          <Collapsible key={node.path} defaultOpen={level < 1}>
+          <Collapsible key={node.path} defaultOpen={level < 2}>
             <CollapsibleTrigger asChild>
                 <Button variant="ghost" className="w-full justify-start gap-2 h-8 px-2">
                     <Folder className="h-4 w-4 text-primary" />
@@ -47,7 +34,7 @@ const FileExplorer: FC<FileExplorerProps> = ({ activeFile, onFileSelect }) => {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div style={{ paddingLeft: `${(level + 1) * 12}px` }} className="flex flex-col">
-                {renderTree(node.children, level + 1)}
+                {node.children && renderTree(node.children, level + 1)}
               </div>
             </CollapsibleContent>
           </Collapsible>
