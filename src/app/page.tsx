@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import AppHeader from "@/components/app-header";
 import FileExplorer, { type FileNode } from "@/components/file-explorer";
 import EditorPanel from "@/components/editor-panel";
 import TerminalPanel from "@/components/terminal-panel";
 import AiAssistantPanel from "@/components/ai-assistant-panel";
+import { readFileContent } from "@/ai/flows/file-system";
+import { useToast } from "@/hooks/use-toast";
 
 const initialFileTree: FileNode[] = [
   {
@@ -49,12 +51,25 @@ export default function Home() {
   const [code, setCode] = useState(initialCode);
   const [activeFile, setActiveFile] = useState("");
   const [fileTree, setFileTree] = useState<FileNode[]>(initialFileTree);
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
 
-  const handleFileSelect = (file: string) => {
-    setActiveFile(file);
-    // In a real app, you'd fetch the file content here.
-    // For now, we'll just show the path.
-    setCode(`// File: ${file}\n\n// File content would be loaded here.`);
+  const handleFileSelect = (filePath: string) => {
+    setActiveFile(filePath);
+    startTransition(async () => {
+        try {
+            const { content } = await readFileContent({ filePath });
+            setCode(content);
+        } catch (error: any) {
+            console.error("Failed to read file", error);
+            toast({
+                variant: "destructive",
+                title: "Error reading file",
+                description: error.message,
+            })
+            setCode(`// Error loading file: ${filePath}`);
+        }
+    })
   };
 
   return (
@@ -67,6 +82,7 @@ export default function Home() {
             file={activeFile}
             code={code}
             onCodeChange={setCode}
+            isLoading={isPending}
           />
           <TerminalPanel code={code} />
         </div>
