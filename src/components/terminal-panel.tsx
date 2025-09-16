@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from './ui/button';
 
 interface TerminalPanelProps {
-    code: string;
+    height: number;
 }
 
 interface LogEntry {
@@ -17,7 +17,7 @@ interface LogEntry {
   content: string;
 }
 
-const TerminalPanel: FC<TerminalPanelProps> = ({ code }) => {
+const TerminalPanel: FC<TerminalPanelProps> = ({ height }) => {
   const [input, setInput] = useState('');
   const [log, setLog] = useState<LogEntry[]>([
     { type: 'output', content: 'Welcome to the integrated terminal.' },
@@ -63,16 +63,6 @@ const TerminalPanel: FC<TerminalPanelProps> = ({ code }) => {
       case 'ls':
         output = 'public/\nsrc/\npackage.json\nREADME.md';
         break;
-      case 'node src/main.js':
-        try {
-            const funcStr = code.slice(code.indexOf('function'));
-            const evalFunc = new Function(`return ${funcStr}`)();
-            const result = evalFunc(10);
-            output = `Fibonacci(10) is ${result}`;
-        } catch (e: any) {
-            output = `Error: ${e.message}`;
-        }
-        break;
       default:
         output = `command not found: ${command}`;
     }
@@ -115,7 +105,7 @@ const TerminalPanel: FC<TerminalPanelProps> = ({ code }) => {
   };
 
   return (
-    <div className="h-40 shrink-0 border-t bg-card">
+    <div style={{ height: `${height}px`}} className="shrink-0 border-t bg-card">
       <div className="flex h-10 items-center justify-between border-b px-4">
         <div className="flex items-center gap-2">
           <Terminal className="h-5 w-5" />

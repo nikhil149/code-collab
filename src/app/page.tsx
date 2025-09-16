@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useCallback, useRef, useEffect } from "react";
 import AppHeader from "@/components/app-header";
 import FileExplorer, { type FileNode } from "@/components/file-explorer";
 import EditorPanel from "@/components/editor-panel";
@@ -8,6 +8,8 @@ import TerminalPanel from "@/components/terminal-panel";
 import AiAssistantPanel from "@/components/ai-assistant-panel";
 import { readFileContent } from "@/ai/flows/file-system";
 import { useToast } from "@/hooks/use-toast";
+import { GripHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const initialFileTree: FileNode[] = [
   {
@@ -54,6 +56,11 @@ export default function Home() {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
+  const [terminalHeight, setTerminalHeight] = useState(250);
+  const isResizing = useRef(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+
+
   const handleFileSelect = (filePath: string) => {
     setActiveFile(filePath);
     startTransition(async () => {
@@ -72,19 +79,56 @@ export default function Home() {
     })
   };
 
+    const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        isResizing.current = true;
+    }, []);
+
+    const handleMouseUp = useCallback(() => {
+        isResizing.current = false;
+    }, []);
+
+    const handleMouseMove = useCallback((e: MouseEvent) => {
+        if (!isResizing.current || !editorRef.current) return;
+        
+        const editorRect = editorRef.current.getBoundingClientRect();
+        const newHeight = editorRect.bottom - e.clientY;
+
+        if (newHeight > 50 && newHeight < window.innerHeight * 0.8) {
+            setTerminalHeight(newHeight);
+        }
+
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [handleMouseMove, handleMouseUp]);
+
+
   return (
     <div className="flex h-screen flex-col bg-background text-foreground font-body">
       <AppHeader language={language} onLanguageChange={setLanguage} onCloneSuccess={setFileTree} />
       <main className="flex flex-1 overflow-hidden">
         <FileExplorer fileTree={fileTree} activeFile={activeFile} onFileSelect={handleFileSelect} />
-        <div className="flex flex-1 flex-col min-w-0">
+        <div ref={editorRef} className="flex flex-1 flex-col min-w-0">
           <EditorPanel
             file={activeFile}
             code={code}
             onCodeChange={setCode}
             isLoading={isPending}
           />
-          <TerminalPanel code={code} />
+           <div
+              className={cn("group w-full h-2 flex items-center justify-center bg-border/50 cursor-row-resize transition-all", isResizing.current && "bg-primary/50" )}
+              onMouseDown={handleMouseDown}
+            >
+              <GripHorizontal className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+            </div>
+          <TerminalPanel height={terminalHeight} />
         </div>
         <AiAssistantPanel code={code} language={language} />
       </main>

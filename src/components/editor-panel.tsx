@@ -37,7 +37,7 @@ const EditorPanel: FC<EditorPanelProps> = ({ file, code, onCodeChange, isLoading
   };
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden min-h-0">
       <div className="flex h-10 items-center justify-between border-b bg-card px-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {isLoading ? (
