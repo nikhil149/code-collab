@@ -6,9 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
@@ -98,9 +95,13 @@ const AiAssistantPanel: FC<AiAssistantPanelProps> = ({ code, language }) => {
         return (
             <div>
                 <h4 className="font-semibold mt-4 mb-2">Refined Code:</h4>
-                <pre className="bg-muted p-3 rounded-md text-sm font-code overflow-x-auto"><code>{output.refinedCode}</code></pre>
+                <ScrollArea className="h-48">
+                  <pre className="bg-muted p-3 rounded-md text-sm font-code overflow-x-auto"><code>{output.refinedCode}</code></pre>
+                </ScrollArea>
                 <h4 className="font-semibold mt-4 mb-2">Explanation:</h4>
-                <p className="text-sm whitespace-pre-wrap">{output.explanation}</p>
+                <ScrollArea className="h-48">
+                  <p className="text-sm whitespace-pre-wrap pr-4">{output.explanation}</p>
+                </ScrollArea>
             </div>
         );
     }
@@ -109,15 +110,21 @@ const AiAssistantPanel: FC<AiAssistantPanelProps> = ({ code, language }) => {
         return (
             <div>
                 <h4 className="font-semibold mt-4 mb-2">Potential Errors:</h4>
-                <ul className="list-disc list-inside text-sm text-destructive">
-                    {output.errors.map((err, i) => <li key={i}>{err}</li>)}
-                </ul>
+                 <ScrollArea className="h-24">
+                    <ul className="list-disc list-inside text-sm text-destructive pr-4">
+                        {output.errors.map((err, i) => <li key={i}>{err}</li>)}
+                    </ul>
+                </ScrollArea>
                 <h4 className="font-semibold mt-4 mb-2">Suggestions:</h4>
-                <ul className="list-disc list-inside text-sm">
-                    {output.suggestions.map((sug, i) => <li key={i}>{sug}</li>)}
-                </ul>
+                <ScrollArea className="h-24">
+                    <ul className="list-disc list-inside text-sm pr-4">
+                        {output.suggestions.map((sug, i) => <li key={i}>{sug}</li>)}
+                    </ul>
+                </ScrollArea>
                 <h4 className="font-semibold mt-4 mb-2">Explanation:</h4>
-                <p className="text-sm whitespace-pre-wrap">{output.explanation}</p>
+                <ScrollArea className="h-32">
+                    <p className="text-sm whitespace-pre-wrap pr-4">{output.explanation}</p>
+                </ScrollArea>
             </div>
         );
     }
@@ -126,7 +133,9 @@ const AiAssistantPanel: FC<AiAssistantPanelProps> = ({ code, language }) => {
         return (
             <div>
                 <h4 className="font-semibold mt-4 mb-2">Explanation:</h4>
-                <p className="text-sm whitespace-pre-wrap">{output.explanation}</p>
+                <ScrollArea className="h-96">
+                    <p className="text-sm whitespace-pre-wrap pr-4">{output.explanation}</p>
+                </ScrollArea>
             </div>
         );
     }
