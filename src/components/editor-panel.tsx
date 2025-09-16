@@ -1,10 +1,10 @@
-import { FC, useState, useTransition } from 'react';
-import { Textarea } from '@/components/ui/textarea';
-import { FileCode, LoaderCircle, Save } from 'lucide-react';
-import { ScrollArea } from './ui/scroll-area';
-import { Button } from './ui/button';
-import { writeFileContent } from '@/ai/flows/file-system';
-import { useToast } from '@/hooks/use-toast';
+import { FC, useState, useTransition } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { FileCode, LoaderCircle, Save } from "lucide-react";
+import { ScrollArea } from "./ui/scroll-area";
+import { Button } from "./ui/button";
+import { writeFileContent } from "@/ai/flows/file-system";
+import { useToast } from "@/hooks/use-toast";
 
 interface EditorPanelProps {
   file: string;
@@ -13,7 +13,12 @@ interface EditorPanelProps {
   isLoading: boolean;
 }
 
-const EditorPanel: FC<EditorPanelProps> = ({ file, code, onCodeChange, isLoading }) => {
+const EditorPanel: FC<EditorPanelProps> = ({
+  file,
+  code,
+  onCodeChange,
+  isLoading,
+}) => {
   const { toast } = useToast();
   const [isSaving, startTransition] = useTransition();
 
@@ -41,16 +46,21 @@ const EditorPanel: FC<EditorPanelProps> = ({ file, code, onCodeChange, isLoading
       <div className="flex h-10 items-center justify-between border-b bg-card px-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {isLoading ? (
-             <LoaderCircle className="h-4 w-4 animate-spin" />
+            <LoaderCircle className="h-4 w-4 animate-spin" />
           ) : (
             <FileCode className="h-4 w-4" />
           )}
           <span className="font-medium text-foreground">{file}</span>
         </div>
         {file && (
-          <Button variant="ghost" size="sm" onClick={handleSave} disabled={isSaving}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
             <Save className="mr-2 h-4 w-4" />
-            {isSaving ? 'Saving...' : 'Save'}
+            {isSaving ? "Saving..." : "Save"}
           </Button>
         )}
       </div>
