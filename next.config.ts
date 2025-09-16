@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  reactStrictMode: true,
   basePath: "/code-collab", // Add your subdirectory path here
   typescript: {
     ignoreBuildErrors: true,
